@@ -1,0 +1,14 @@
+[Unit]
+Description={{.Appl}}-setup for {{.Appl}} as oneshot
+Before={{.Appl}}.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/bin/{{.Appl}}-setup.sh
+
+[Install]
+WantedBy=multi-user.target
+
+# local variables:
+# mode: conf
+# end:

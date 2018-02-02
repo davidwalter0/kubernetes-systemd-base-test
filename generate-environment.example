@@ -1,0 +1,21 @@
+#!/bin/bash
+
+export MAINTAINER="**FIXME**"
+export MAINTAINER_EMAIL="**FIXME**"
+export DOCKER_USER="**FIXME**"
+export BASE_IMAGE=${DOCKER_USER}/systemd:testing
+export CORE_USER=core
+
+export APPL=echo
+export RUN_USER=${APPL}
+export RUN_UID=1000
+export APPL_CMDLINE=/opt/bin/${APPL}-start.sh
+export APPL_ENV=/etc/${APPL}/environment
+export IMAGE=systemd-${APPL}:latest
+export LoadBalancerIP=192.168.0.192
+export PORT=8888
+export PORT_NAME=http
+
+# local variables:
+# mode: shell-script
+# end:

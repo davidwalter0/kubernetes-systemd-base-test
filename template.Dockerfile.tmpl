@@ -1,0 +1,37 @@
+FROM {{.BaseImage}}
+MAINTAINER {{.Maintainer}} {{.MaintainerEmail}}
+
+ENV container docker
+RUN mkdir -p /opt/bin /etc/{{.Appl}} /var/lib/{{.Appl}}
+ADD {{.Appl}}               /opt/bin/{{.Appl}}
+ADD {{.Appl}}.environment   /etc/{{.Appl}}/environment
+ADD {{.Appl}}-setup.sh      /opt/bin/{{.Appl}}-setup.sh
+ADD {{.Appl}}-start.sh      /opt/bin/{{.Appl}}-start.sh
+ADD {{.Appl}}.service       /etc/systemd/system/{{.Appl}}.service
+ADD {{.Appl}}-setup.service /etc/systemd/system/{{.Appl}}-setup.service
+# ADD journal.service         /etc/systemd/system/journal.service
+ADD entrypoint.sh           /opt/bin/entrypoint.sh
+
+RUN chmod 755 /opt/bin/{{.Appl}}-setup.sh /opt/bin/{{.Appl}}-start.sh /opt/bin/entrypoint.sh
+RUN systemctl enable {{.Appl}}.service
+RUN systemctl enable {{.Appl}}-setup.service
+# RUN systemctl enable journal.service
+RUN systemctl set-default multi-user.target;
+RUN systemctl enable systemd-user-sessions.service;
+
+VOLUME /etc/{{.Appl}}
+VOLUME /var/lib/{{.Appl}}
+VOLUME /sys/fs/cgroup
+
+EXPOSE {{.Port}}
+
+# exec of /lib/systemd/systemd in a script has a shared stdout,stderr
+CMD ["/opt/bin/entrypoint.sh"]
+# CMD ["/lib/systemd/systemd"]
+# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--system", "--default-standard-output=console", "--default-standard-error=console"]
+# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--default-standard-output=console", "--default-standard-error=console"]
+# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--system"]
+
+# local variables:
+# mode: conf
+# end:

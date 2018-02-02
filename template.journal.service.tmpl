@@ -1,0 +1,19 @@
+[Unit]
+Description=journal dump to stderr {{.Appl}} Server
+# After={{.Appl}}
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/journalctl -f -u {{.Appl}}
+Restart=on-failure
+# StandardOutput=syslog+console
+# StandardError=syslog+console
+# StandardOutput=console
+# StandardError=console
+
+[Install]
+WantedBy=multi-user.target
+
+# local variables:
+# mode: conf
+# end:

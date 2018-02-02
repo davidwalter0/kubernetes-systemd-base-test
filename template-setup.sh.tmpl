@@ -1,0 +1,44 @@
+#!/bin/bash -x
+echo "${0##*/} Script Start"
+
+function newuser {
+    user=$1
+    uid=$2
+    addgroup --gid ${uid} ${user} ;
+    echo Y|adduser --shell /bin/bash --disabled-password --home /var/lib/${user} --uid ${uid} --gid ${uid} ${user} ;
+    mkdir -p /var/lib/${user}/ssh /var/lib/${user}/.ssh
+    touch /var/lib/${user}/.ssh/authorized_keys;
+    touch /var/lib/${user}/.hushlogin;
+    git config --global http.sslVerify false;
+    chown ${user} -R /var/lib/${user} /var/lib/${user}/.ssh;
+    mkdir -p /var/lib/${user}/.ssh
+    ########################################################################
+    # If adding ssh keys from default ssh user
+    ########################################################################
+    # cp /home/{{ .CoreUser }}/ssh/* /var/lib/${user}/.ssh/
+    # chown -R ${user}:${user} /var/lib/${user}; 
+    # chmod 600 /var/lib/${user}/.ssh/*
+    # chmod 644 /var/lib/${user}/.ssh/authorized_keys  /var/lib/${user}/.ssh/*.pub
+    # chown -R ${user}:${user} /var/lib/${user}/.ssh; 
+    # chmod 700 /var/lib/${user}/.ssh;
+    ########################################################################
+    # if using git and or sudo
+    ########################################################################
+    # echo "${user} ALL=NOPASSWD:ALL" >> /etc/sudoers;
+    # sudo -u ${user} git config --global http.sslVerify false;
+}
+
+newuser {{.RunUser}}   {{.RunUid}}
+
+if [[ -d /var/lib/{{.Appl}}/config ]]; then
+    rsync -rla /var/lib/{{.Appl}}/config/ /etc/{{.Appl}}/
+fi
+if [[ -d /var/lib/{{.Appl}}/systemd ]]; then
+    rsync -rla /var/lib/{{.Appl}}/systemd/ /etc/systemd/system/
+fi
+
+[[ -d /etc/{{.Appl}} ]] && chown {{.RunUser}}:{{.RunUser}} -R /etc/{{.Appl}}
+[[ -d /var/lib/{{.Appl}} ]] && chown {{.RunUser}}:{{.RunUser}} -R /var/lib/{{.Appl}}
+
+rm -f {/var,}/run/nologin
+echo "${0##*/} Script Ran Successfully"

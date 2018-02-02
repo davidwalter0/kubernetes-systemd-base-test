@@ -1,0 +1,21 @@
+[Unit]
+Description={{.Appl}} Server
+
+[Service]
+Type=simple
+WorkingDirectory=/var/lib/{{.Appl}}
+EnvironmentFile=-/etc/{{.Appl}}/environment
+User={{.RunUser}}
+ExecStart={{.ApplCmdline}}
+Restart=always
+# default 100ms
+RestartSec=500ms
+StandardOutput=syslog+console
+StandardError=syslog+console
+
+[Install]
+WantedBy=multi-user.target
+
+# local variables:
+# mode: conf
+# end:

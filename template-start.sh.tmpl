@@ -1,0 +1,7 @@
+#!/bin/bash -x
+echo "${0##*/} Script Start"
+echo OK about to run
+echo "${0##*/} Script Ran Successfully"
+echo About to Exec {{.Appl}}
+
+exec /opt/bin/{{.Appl}}
