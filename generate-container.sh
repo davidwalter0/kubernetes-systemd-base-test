@@ -28,5 +28,5 @@ timestamp
 cd appl
 echo docker build --no-cache --force-rm --rm --tag ${DOCKER_USER}/${IMAGE} .
 docker build --no-cache --force-rm --rm --tag ${DOCKER_USER}/${IMAGE} .
-echo docker push ${DOCKER_USER}/${IMAGE}
+docker push ${DOCKER_USER}/${IMAGE}
 timestamp

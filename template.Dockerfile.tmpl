@@ -10,9 +10,7 @@ ADD {{.Appl}}-start.sh      /opt/bin/{{.Appl}}-start.sh
 ADD {{.Appl}}.service       /etc/systemd/system/{{.Appl}}.service
 ADD {{.Appl}}-setup.service /etc/systemd/system/{{.Appl}}-setup.service
 # ADD journal.service         /etc/systemd/system/journal.service
-ADD entrypoint.sh           /opt/bin/entrypoint.sh
 
-RUN chmod 755 /opt/bin/{{.Appl}}-setup.sh /opt/bin/{{.Appl}}-start.sh /opt/bin/entrypoint.sh
 RUN systemctl enable {{.Appl}}.service
 RUN systemctl enable {{.Appl}}-setup.service
 # RUN systemctl enable journal.service
@@ -25,12 +23,11 @@ VOLUME /sys/fs/cgroup
 
 EXPOSE {{.Port}}
 
-# exec of /lib/systemd/systemd in a script has a shared stdout,stderr
-CMD ["/opt/bin/entrypoint.sh"]
-# CMD ["/lib/systemd/systemd"]
-# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--system", "--default-standard-output=console", "--default-standard-error=console"]
-# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--default-standard-output=console", "--default-standard-error=console"]
-# ENTRYPOINT ["/lib/systemd/systemd", "--log-target=console", "--log-color", "--system"]
+# exec of /lib/systemd/systemd in a script with a while loop keeps
+# shared stdout,stderr open
+ADD entrypoint.sh           /opt/bin/entrypoint.sh
+RUN chmod 755 /opt/bin/{{.Appl}}-setup.sh /opt/bin/{{.Appl}}-start.sh /opt/bin/entrypoint.sh
+ENTRYPOINT ["/opt/bin/entrypoint.sh"]
 
 # local variables:
 # mode: conf

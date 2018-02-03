@@ -1,14 +1,5 @@
 #!/usr/bin/bash
-(
-    sleep 10;
-    while : ; do
-        /usr/bin/systemctl  status -l  {{.Appl}}-setup {{.Appl}} | cat
-        /usr/bin/journalctl     -u {{.Appl}}-setup -u {{.Appl}}  | cat
-        /usr/bin/journalctl -f  -u {{.Appl}}-setup -u {{.Appl}}
-        echo "journalctl died $?. sleeping 1 second before restarting."
-        sleep 1
-    done
-) &
+(while : ; do sleep 60; done)&
 
-# /lib/systemd/systemd
-exec /lib/systemd/systemd --log-target=console --log-color --system
+exec /lib/systemd/systemd --log-target=console --log-color --system --default-standard-output=journal+console --default-standard-error=journal+console
+
